@@ -12,7 +12,16 @@ func TestLogrus(t *testing.T) {
 
 	logrus.InitLogrus(options.WithLevel("debug"), options.WithOutPut("console"), options.WithFormat(""))
 
-	c := logger.NewContext(context.Background(), "1234567")
+	c := context.Background()
+	logger.NewContext(&c, logger.File{
+		Key:   "traceId",
+		Value: "123456",
+	})
+
+	logger.NewContext(&c, logger.File{
+		Key:   "sss",
+		Value: "2222",
+	})
 
 	logger.WithContext(c).Debug("debug")
 	logger.WithContext(c).Info("Info")

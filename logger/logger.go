@@ -45,6 +45,11 @@ func Fatalf(format string, args ...interface{}) {
 	lgr.GetLogrus().Fatal(fmt.Sprintf(format, args...))
 }
 
+type File struct {
+	Key   string
+	Value interface{}
+}
+
 /**
   @Description: 将logger实例存在ctx中
   @param ctx 需要传的ctx
@@ -52,8 +57,12 @@ func Fatalf(format string, args ...interface{}) {
   @return context.Context
 */
 
-func NewContext(ctx context.Context, value interface{}) context.Context {
-	return context.WithValue(ctx, loggerKey, withValue(value))
+func NewContext(ctx *context.Context, file File) {
+
+	c := context.WithValue(*ctx, loggerKey, withValue(*ctx, file))
+
+	*ctx = c
+
 }
 
 /**
@@ -66,12 +75,26 @@ func WithContext(ctx context.Context) Log {
 
 	value := ctx.Value(loggerKey)
 
-	ctxLogger, _ := value.(Log)
+	ctxLogger, ok := value.(Log)
+
+	if !ok {
+		return Log{lgr.GetLogrus()}
+	}
 
 	return ctxLogger
 
 }
 
-func withValue(value interface{}) Log {
-	return Log{lgr.GetLogrus().WithField(loggerKey, value)}
+/**
+  @Description: 为log添加key-value
+  @param ctx
+  @param file
+  @return Log
+*/
+
+func withValue(ctx context.Context, file File) Log {
+
+	log := WithContext(ctx)
+
+	return Log{log.WithField(file.Key, file.Value)}
 }

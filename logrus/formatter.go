@@ -52,14 +52,34 @@ func (f *LogFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 			timestamp, level, name, line, entry.Message)
 
 		if len(entry.Data) > 0 {
-			var traceId interface{}
+			var b *bytes.Buffer
 
-			for _, v := range entry.Data {
-				traceId = v
+			if entry.Buffer != nil {
+				b = entry.Buffer
+			} else {
+				b = &bytes.Buffer{}
 			}
 
-			msg = fmt.Sprintf("[%s] [%s] [%s] [%s:%d] %s\n",
-				timestamp, level, traceId, name, line, entry.Message)
+			f.appendNormal(b, timestamp)
+
+			f.appendNormal(b, level)
+
+			for key, value := range entry.Data {
+				f.appendKeyValue(b, key, value)
+			}
+
+			f.appendNormal(b, fmt.Sprintf("%s:%d", name, line))
+
+			b.WriteString(" ")
+
+			b.WriteString(entry.Message)
+
+			b.WriteString(" \n")
+
+			msg = b.String()
+			//
+			//msg = fmt.Sprintf("[%s] [%s] [%s] [%s:%d] %s\n",
+			//	timestamp, level, entry.Data, name, line, entry.Message)
 		}
 
 	} else {
@@ -69,6 +89,34 @@ func (f *LogFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	b.WriteString(msg)
 
 	return b.Bytes(), nil
+}
+
+func (f *LogFormatter) appendNormal(b *bytes.Buffer, normal string) {
+	if b.Len() > 0 {
+		b.WriteByte(' ')
+	}
+	b.WriteString("[")
+	b.WriteString(normal)
+	b.WriteString("]")
+
+}
+
+func (f *LogFormatter) appendKeyValue(b *bytes.Buffer, key string, value interface{}) {
+	if b.Len() > 0 {
+		b.WriteByte(' ')
+	}
+	b.WriteString("[")
+
+	b.WriteString(key)
+	b.WriteByte('=')
+	//f.appendValue(b, value)
+	stringVal, ok := value.(string)
+	if !ok {
+		stringVal = fmt.Sprint(value)
+	}
+	b.WriteString(stringVal)
+	b.WriteString("]")
+
 }
 
 //  @Description: 统一日志级别格式

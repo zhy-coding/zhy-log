@@ -10,45 +10,45 @@ import (
 //  @date 2023-04-12 14:22:59
 
 type Log struct {
-	lgr *logrus.Entry
+	*logrus.Entry
 }
 
 func (l Log) Debug(args ...interface{}) {
-	l.lgr.Debug(args...)
+	l.Entry.Debug(args...)
 }
 
 func (l Log) Info(args ...interface{}) {
-	l.lgr.Info(args...)
+	l.Entry.Info(args...)
 }
 
 func (l Log) Warn(args ...interface{}) {
-	l.lgr.Warn(args...)
+	l.Entry.Warn(args...)
 }
 
 func (l Log) Error(args ...interface{}) {
-	l.lgr.Error(args...)
+	l.Entry.Error(args...)
 }
 
 func (l Log) Fatal(args ...interface{}) {
-	l.lgr.Fatal(args...)
+	l.Entry.Fatal(args...)
 }
 
 func (l Log) Debugf(format string, args ...interface{}) {
-	l.lgr.Debug(fmt.Sprintf(format, args...))
+	l.Entry.Debug(fmt.Sprintf(format, args...))
 }
 
 func (l Log) Infof(format string, args ...interface{}) {
-	l.lgr.Info(fmt.Sprintf(format, args...))
+	l.Entry.Info(fmt.Sprintf(format, args...))
 }
 
 func (l Log) Warnf(format string, args ...interface{}) {
-	l.lgr.Warn(fmt.Sprintf(format, args...))
+	l.Entry.Warn(fmt.Sprintf(format, args...))
 }
 
 func (l Log) Errorf(format string, args ...interface{}) {
-	l.lgr.Error(fmt.Sprintf(format, args...))
+	l.Entry.Error(fmt.Sprintf(format, args...))
 }
 
 func (l Log) Fatalf(format string, args ...interface{}) {
-	l.lgr.Fatal(fmt.Sprintf(format, args...))
+	l.Entry.Fatal(fmt.Sprintf(format, args...))
 }
